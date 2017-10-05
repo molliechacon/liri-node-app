@@ -2,7 +2,7 @@
 var keys = require("./keys.js");
 var request = require("request");
 var twitter = require("twitter");
-var spotifyAPI = require("node-spotify-api");
+var spotify = require("node-spotify-api");
 var fs = require("fs");
 
 
@@ -23,31 +23,35 @@ for (var i = 3; i < nodeArgs.length; i++) {
 }
 
 
-// cases
-if (command === "my-tweets") {
-	myTweets();
-} else if (command === "spotify-this-song") {
-	if (userInput){
-	spotifySong();
-	} else {
-		userInput = "The Sign Ace of Base";
+// user entry cases (stored as a function to be called more easily by do-what-it-says command)
+function cases() {
+	if (command === "my-tweets") {
+		myTweets();
+	} else if (command === "spotify-this-song") {
+		if (userInput){
 		spotifySong();
-	}
-} else if (command === "movie-this") {
-	if (userInput){
-		movieThis();
+		} else {
+			userInput = "The Sign Ace of Base";
+			spotifySong();
+		}
+	} else if (command === "movie-this") {
+		if (userInput){
+			movieThis();
+		} else {
+			userInput = "Mr. Nobody"
+			movieThis();
+		}
+	} else if (command === "do-what-it-says") {
+		doWhatItSays();
 	} else {
-		userInput = "Mr. Nobody"
-		movieThis();
+		console.log("Please enter one of the following required commands: my-tweets, spotify-this-song, movie-this or do-what-it-says.");
 	}
-} else if (command === "do-what-it-says") {
-	doWhatItSays();
-} else {
-	console.log("Please enter one of the following required commands: my-tweets, spotify-this-song, movie-this or do-what-it-says.");
-}
+};
+
+cases();
 
 
-// functions
+// command functions
 function myTweets() {
 
 	var params = {screen_name: "PearlMaferl"};
@@ -69,7 +73,7 @@ function myTweets() {
 
 function spotifySong() {
 
-	var spotifyKey = new spotifyAPI({
+	var spotifyKey = new spotify({
 		id: "1b10b9d316bb4217982080097aae03c1",
 		secret: "32e21acefdb248a5b457ae0f1c997c69"
 	});
@@ -127,24 +131,7 @@ function doWhatItSays() {
 			command = fileAction[0];
 			userInput = fileAction[1];
 
-			if (command === "my-tweets") {
-				myTweets();
-			} else if (command === "spotify-this-song") {
-				if (userInput){
-				spotifySong();
-				} else {
-					userInput = "The Sign Ace of Base";
-					spotifySong();
-				}
-			} else if (command === "movie-this") {
-				if (userInput){
-					movieThis();
-				} else {
-					userInput = "Mr. Nobody"
-					movieThis();
-				}
-
-			}
+			cases();
 		}
 	});
 };
